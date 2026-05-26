@@ -1,21 +1,82 @@
 import streamlit as st
+import pandas as pd
+
+# ====================================================
+# PAGE CONFIG
+# ====================================================
+
+st.set_page_config(
+    page_title="Mitradnya Learning Platform",
+    layout="wide"
+)
+
+# ====================================================
+# TITLE
+# ====================================================
+
+st.title("📚 Mitradnya Learning Platform 📚")
+
+# ====================================================
+# MAIN TABS
+# ====================================================
+
+main_tabs = st.tabs([
+    "🎓 Student Dashboard",
+    "👨‍🏫 Admin Dashboard"
+])
+
+# ====================================================
+# STUDENT DASHBOARD
+# ====================================================
+
+with main_tabs[0]:
+
+    st.header("🎓 Student Dashboard")
+
+    student_tabs = st.tabs([
+        "📖 Notes",
+        "📝 Questions",
+        "🎯 MCQ",
+        "🎥 Study Room"
+    ])
+
+    # NOTES
+
+    with student_tabs[0]:
+
+        st.subheader("📖 Notes")
+
+        uploaded_notes = st.file_uploader(
+            "Upload PDF Notes",
+            type=["pdf"]
         )
 
-        completed = st.slider(
-            "Completed Questions",
-            0,
-            total,
-            5
-        )
+        if uploaded_notes:
+            st.success("Notes Uploaded Successfully")
 
-        progress = completed / total
+    # QUESTIONS
 
-        st.progress(progress)
+    with student_tabs[1]:
 
-        st.write(
-            f"✅ Progress: {completed}/{total}"
-        )
+        st.subheader("📝 Questions")
 
+        st.info("Questions Section Working")
+
+    # MCQ
+
+    with student_tabs[2]:
+
+        st.subheader("🎯 MCQ Test")
+
+        st.info("MCQ Section Working")
+
+    # STUDY ROOM
+
+    with student_tabs[3]:
+
+        st.subheader("🎥 Study Room")
+
+        st.info("Study Room Working")
 
 # ====================================================
 # ADMIN DASHBOARD
@@ -25,47 +86,4 @@ with main_tabs[1]:
 
     st.header("👨‍🏫 Admin Dashboard")
 
-    admin_tabs = st.tabs([
-        "📝 Paper Generator",
-        "📤 Upload Questions",
-        "📊 Analytics"
-    ])
-
-
-    # ====================================================
-    # PAPER GENERATOR
-    # ====================================================
-
-    with admin_tabs[0]:
-
-        st.subheader("📝 Paper Generator")
-
-        subject = st.selectbox(
-            "Select Subject",
-            [
-                "Book Keeping",
-                "OCM",
-                "SP",
-                "Economics"
-            ]
-        )
-
-        marks = st.number_input(
-            "Total Marks",
-            value=80
-        )
-
-        if st.button("Generate Paper"):
-
-            st.success("Paper Generated")
-
-            st.markdown(f"""
-            ### 📄 {subject} Question Paper
-
-            Total Marks: {marks}
-
-            Q1. Objective Questions
-
-            Q2. Short Notes
-
-            Q3. Practical Problems
+    st.info("Admin Dashboard Working")
