@@ -1,202 +1,21 @@
 import streamlit as st
-import pandas as pd
-import google.generativeai as genai
-
-# ====================================================
-# GEMINI API
-# ====================================================
-
-API_KEY = " "
-
-genai.configure(api_key=API_KEY)
-
-# ====================================================
-# PAGE CONFIG
-# ====================================================
-
-st.set_page_config(
-    page_title="Mitradnya Learning Platform",
-    layout="wide"
-)
-
-st.title("📚 Mitradnya Learning Platform")
-
-# ====================================================
-# MAIN TABS
-# ====================================================
-
-main_tabs = st.tabs([
-    "🎓 Student Dashboard",
-    "👨‍🏫 Admin Dashboard"
-])
-
-# ====================================================
-# STUDENT DASHBOARD
-# ====================================================
-
-with main_tabs[0]:
-
-    st.header("🎓 Student Dashboard")
-
-    student_tabs = st.tabs([
-        "📖 Notes",
-        "📝 Questions",
-        "🎯 MCQ",
-        "📄 Board Papers",
-        "🎥 Study Room"
-    ])
-
-    # ====================================================
-    # NOTES
-    # ====================================================
-
-    with student_tabs[0]:
-
-        st.subheader("📖 Notes")
-
-        uploaded_notes = st.file_uploader(
-            "Upload Notes",
-            type=["pdf"]
         )
 
-        if uploaded_notes:
-
-            st.success("Notes Uploaded Successfully")
-
-    # ====================================================
-    # QUESTIONS
-    # ====================================================
-
-    with student_tabs[1]:
-
-        st.subheader("📝 Questions")
-
-        uploaded_questions = st.file_uploader(
-            "Upload QnA CSV",
-            type=["csv"]
+        completed = st.slider(
+            "Completed Questions",
+            0,
+            total,
+            5
         )
 
-        if uploaded_questions:
+        progress = completed / total
 
-            df = pd.read_csv(uploaded_questions)
+        st.progress(progress)
 
-            question = st.selectbox(
-                "Select Question",
-                df["Question_Text"].dropna()
-            )
-
-            st.info(question)
-
-            if st.button("Show AI Solution"):
-
-                with st.spinner("Generating Solution..."):
-
-                    try:
-
-                        model = genai.GenerativeModel(
-                            "gemini-2.0-flash"
-                        )
-
-                        prompt = f"""
-                        Solve this Maharashtra Board question.
-
-                        Rules:
-                        - step-by-step
-                        - easy explanation
-                        - proper format
-                        - board style answer
-
-                        Question:
-                        {question}
-                        """
-
-                        response = model.generate_content(
-                            prompt
-                        )
-
-                        st.success("Solution Generated")
-
-                        st.write(response.text)
-
-                    except Exception as e:
-
-                        st.error(e)
-
-    # ====================================================
-    # MCQ TEST
-    # ====================================================
-
-    with student_tabs[2]:
-
-        st.subheader("🎯 MCQ Test")
-
-        uploaded_mcq = st.file_uploader(
-            "Upload MCQ CSV",
-            type=["csv"]
+        st.write(
+            f"✅ Progress: {completed}/{total}"
         )
 
-        if uploaded_mcq:
-
-            mcq_df = pd.read_csv(
-                uploaded_mcq,
-                encoding="latin1"
-            )
-
-            random_question = mcq_df.sample(1).iloc[0]
-
-            st.write(random_question["Question"])
-
-            answer = st.radio(
-                "Choose Answer",
-                [
-                    random_question["Option A"],
-                    random_question["Option B"],
-                    random_question["Option C"],
-                    random_question["Option D"]
-                ]
-            )
-
-            if st.button("Submit MCQ"):
-
-                correct = random_question[
-                    "Correct Answer (Full Text)"
-                ]
-
-                if answer == correct:
-
-                    st.success("Correct Answer")
-
-                else:
-
-                    st.error(
-                        f"Correct Answer: {correct}"
-                    )
-
-    # ====================================================
-    # BOARD PAPERS
-    # ====================================================
-
-    with student_tabs[3]:
-
-        st.subheader("📄 Board Papers")
-
-        st.info("Board Papers Will Be Added Here")
-
-    # ====================================================
-    # STUDY ROOM
-    # ====================================================
-
-    with student_tabs[4]:
-
-        st.subheader("🎥 Study Room")
-
-        video_link = st.text_input(
-            "Enter YouTube Video Link"
-        )
-
-        if video_link:
-
-            st.video(video_link)
 
 # ====================================================
 # ADMIN DASHBOARD
@@ -209,8 +28,9 @@ with main_tabs[1]:
     admin_tabs = st.tabs([
         "📝 Paper Generator",
         "📤 Upload Questions",
-        "📊 Results"
+        "📊 Analytics"
     ])
+
 
     # ====================================================
     # PAPER GENERATOR
@@ -226,7 +46,7 @@ with main_tabs[1]:
                 "Book Keeping",
                 "OCM",
                 "SP",
-                "ECO"
+                "Economics"
             ]
         )
 
@@ -237,10 +57,10 @@ with main_tabs[1]:
 
         if st.button("Generate Paper"):
 
-            st.success("Paper Generated Successfully")
+            st.success("Paper Generated")
 
-            st.write(f"""
-            Subject: {subject}
+            st.markdown(f"""
+            ### 📄 {subject} Question Paper
 
             Total Marks: {marks}
 
@@ -249,39 +69,3 @@ with main_tabs[1]:
             Q2. Short Notes
 
             Q3. Practical Problems
-
-            Q4. Long Answers
-            """)
-
-    # ====================================================
-    # UPLOAD QUESTIONS
-    # ====================================================
-
-    with admin_tabs[1]:
-
-        st.subheader("📤 Upload Questions")
-
-        uploaded_csv = st.file_uploader(
-            "Upload CSV File",
-            type=["csv"]
-        )
-
-        if uploaded_csv:
-
-            df = pd.read_csv(uploaded_csv)
-
-            st.success("Questions Uploaded")
-
-            st.dataframe(df)
-
-    # ====================================================
-    # RESULTS
-    # ====================================================
-
-    with admin_tabs[2]:
-
-        st.subheader("📊 Student Results")
-
-        st.metric("Students", 120)
-
-        st.metric("Average Score", "72%")
