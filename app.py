@@ -226,26 +226,23 @@ if table_data:
         html_table,
         unsafe_allow_html=True
     )
+    if st.button("Show Solution"):
 
-            if st.button("Show Solution"):
+        with st.spinner("Generating Solution..."):
 
-            with st.spinner("Generating Solution..."):
+             try:
 
-                try:
+                 model = genai.GenerativeModel("gemini-3.1-flash")
+                 prompt = f"""
+                 Solve this Maharashtra Board question.
+                 Use:
+                   - proper format
+                   - step-by-step explanation
+                   - easy language
+                   - board pattern
 
-                    model = genai.GenerativeModel("gemini-3.1-flash")
-
-                    prompt = f"""
-                    Solve this Maharashtra Board question.
-
-                    Use:
-                    - proper format
-                    - step-by-step explanation
-                    - easy language
-                    - board pattern
-
-                    Question:
-                    {question}
+                 Question:
+                 {question}
                     """
 
                     response = model.generate_content(
