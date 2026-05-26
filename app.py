@@ -65,7 +65,7 @@ with main_tabs[0]:
 
         st.info(question)
 
-        if st.button("Show Solution"):
+if st.button("Show Solution"):
 
     with st.spinner("Generating Solution..."):
 
