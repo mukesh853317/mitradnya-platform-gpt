@@ -71,11 +71,25 @@ with main_tabs[0]:
 
         st.subheader("📝 Questions")
 
-        uploaded_questions = st.file_uploader(
-            "Upload QnA CSV",
-            type=["csv"]
-        )
+        df = pd.read_csv("data/qna.csv")
 
+df.columns = df.columns.str.strip()
+
+chapter = st.selectbox(
+    "Select Chapter",
+    df["Chapter_Name"].dropna().unique()
+)
+
+filtered_df = df[
+    df["Chapter_Name"] == chapter
+]
+
+question = st.selectbox(
+    "Select Question",
+    filtered_df["Question_Text"].dropna()
+)
+
+st.code(question)
         if uploaded_questions:
 
             df = pd.read_csv(uploaded_questions)
@@ -138,11 +152,39 @@ with main_tabs[0]:
 
         st.subheader("🎯 MCQ Test")
 
-        uploaded_mcq = st.file_uploader(
-            "Upload MCQ CSV",
-            type=["csv"]
-        )
+        mcq_df = pd.read_csv(
+    "data/mcq.csv",
+    encoding="utf-8"
+)
 
+random_question = mcq_df.sample(1).iloc[0]
+
+st.write(random_question["Question"])
+
+answer = st.radio(
+    "Choose Answer",
+    [
+        random_question["Option A"],
+        random_question["Option B"],
+        random_question["Option C"],
+        random_question["Option D"]
+    ]
+)
+
+if st.button("Submit MCQ"):
+
+    correct = random_question[
+        "Correct Answer (Full Text)"
+    ]
+
+    if answer == correct:
+
+        st.success("Correct Answer")
+
+    else:
+
+        st.error(f"Correct Answer: {correct}")
+        
         if uploaded_mcq:
 
             mcq_df = pd.read_csv(
