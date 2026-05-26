@@ -77,9 +77,7 @@ def show_student_dashboard():
 
                     for _, row in group.iterrows():
 
-                        line = str(
-                            row["Question_Text"]
-                        ).strip()
+                        line = str(row["Question_Text"]).strip()
 
                         # TABLE ROW
 
@@ -108,7 +106,7 @@ def show_student_dashboard():
 
                             if line:
 
-                                st.markdown(line)
+                                st.markdown(f"### {line})
 
                     # LAST TABLE
 
