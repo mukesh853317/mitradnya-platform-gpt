@@ -1,15 +1,16 @@
 import streamlit as st
 
-
 def render_html_table(data):
 
     if not data:
         return
 
     html = """
-    <table style='width:100%;
+    <table style='
+    width:100%;
     border-collapse:collapse;
-    margin-bottom:20px;'>
+    margin-bottom:20px;
+    '>
     """
 
     for r_idx, row in enumerate(data):
@@ -21,11 +22,13 @@ def render_html_table(data):
             if r_idx == 0:
 
                 html += f"""
-                <th style='border:1px solid #ddd;
+                <th style='
+                border:1px solid #ddd;
                 padding:10px;
                 background:#374151;
                 color:white;
-                text-align:center;'>
+                text-align:center;
+                '>
                 {col}
                 </th>
                 """
@@ -33,8 +36,10 @@ def render_html_table(data):
             else:
 
                 html += f"""
-                <td style='border:1px solid #ddd;
-                padding:10px;'>
+                <td style='
+                border:1px solid #ddd;
+                padding:10px;
+                '>
                 {col}
                 </td>
                 """
