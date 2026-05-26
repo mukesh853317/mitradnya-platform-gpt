@@ -82,13 +82,13 @@ with main_tabs[0]:
 
         question_type = st.selectbox(
             "Select Question Type",
-            df["Question_Type"].dropna().unique()
+            df["Category"].dropna().unique()
         )
 
         filtered_df = df[
             (df["Chapter_Name"] == chapter)
             &
-            (df["Question_Type"] == question_type)
+            (df["Category"] == question_type)
         ]
         filtered_df = filtered_df.reset_index(drop=True)
 
