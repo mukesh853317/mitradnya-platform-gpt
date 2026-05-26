@@ -69,20 +69,16 @@ with main_tabs[0]:
             st.dataframe(df.head())
         except Exception as e:
             st.error(e)
-            # MCQ
+        
+        # MCQ
         with student_tabs[2]:
-
-        st.subheader("🎯 MCQ Test")
-
-        st.info("MCQ Section Working")
-
-    # STUDY ROOM
-
-    with student_tabs[3]:
-
-        st.subheader("🎥 Study Room")
-
-        st.info("Study Room Working")
+            st.subheader("🎯 MCQ Test")
+            st.info("MCQ Section Working")
+        
+        # STUDY ROOM
+        with student_tabs[3]:
+            st.subheader("🎥 Study Room")
+            st.info("Study Room Working")
 
 # ====================================================
 # ADMIN DASHBOARD
