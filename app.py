@@ -58,29 +58,59 @@ with main_tabs[0]:
                 first_row = group.iloc[0]
                 title = first_row["Question_Text"]
 
-                with st.expander(title):
-                    table_data = []
-                    for _, row in group.iterrows():
-                        line = str(row["Question_Text"])
-                        if "|" in line:
-                            cols = [c.strip() for c in line.split("|")]
-                            table_data.append(cols)
-                        else:
-                            if table_data:
-                                # Function to render table
-                                table_html = "<table style='width:100%; border-collapse:collapse; margin-bottom:15px;'>"
-                                for r_idx, t_row in enumerate(table_data):
-                                    table_html += "<tr>"
-                                    for col in t_row:
-                                        if r_idx == 0:
-                                            table_html += f"<th style='border:1px solid #ddd; padding:8px; background:#262730; color:white;'>{col}</th>"
-                                        else:
-                                            table_html += f"<td style='border:1px solid #ddd; padding:8px;'>{col}</td>"
-                                    table_html += "</tr>"
-                                table_html += "</table>"
-                                st.markdown(table_html, unsafe_allow_html=True)
-                                table_data = []
-                            st.markdown(line)
+import streamlit as st
+
+# टेबल रेंडर करण्यासाठी एक फंक्शन (कोडची पुनरावृत्ती टाळण्यासाठी)
+def render_html_table(data):
+    if not data:
+        return
+    
+    html = "<table style='width:100%; border-collapse:collapse; margin-bottom:15px;'>"
+    for r_idx, t_row in enumerate(data):
+        html += "<tr>"
+        for col in t_row:
+            if r_idx == 0:
+                html += f"<th style='border:1px solid #ddd; padding:10px; background:#374151; color:white; text-align:center;'>{col}</th>"
+            else:
+                html += f"<td style='border:1px solid #ddd; padding:10px;'>{col}</td>"
+        html += "</tr>"
+    html += "</table>"
+    st.markdown(html, unsafe_allow_html=True)
+
+# Main logic inside your loop
+with st.container():
+    st.markdown(f"""
+    <div style="padding:15px; border:1px solid #ddd; border-radius:10px; margin-bottom:20px; background-color:#111827;">
+        <h4 style="color:white;">Question {q_id}</h4>
+    </div>
+    """, unsafe_allow_html=True)
+
+    with st.expander(f"📘 Open Question {q_id}"):
+        table_data = []
+
+        for _, row in group.iterrows():
+            line = str(row["Question_Text"]).strip()
+
+            if "|" in line:
+                cols = [c.strip() for c in line.split("|")]
+                table_data.append(cols)
+            else:
+                # जर टेबल डेटा असेल तर आधी तो प्रिंट करा
+                if table_data:
+                    render_html_table(table_data)
+                    table_data = [] # डेटा रिकामा करा
+                
+                # नॉर्मल टेक्स्ट प्रिंट करा
+                if line:
+                    st.markdown(f"""
+                    <div style="padding:8px; margin-bottom:8px; border-radius:6px; background:#1f2937;">
+                    {line}
+                    </div>
+                    """, unsafe_allow_html=True)
+
+        # शेवटी राहिलेला टेबल डेटा प्रिंट करा
+        if table_data:
+            render_html_table(table_data)
 
                     # Last Table handling
                     if table_data:
