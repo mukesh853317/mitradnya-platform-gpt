@@ -59,9 +59,8 @@ with main_tabs[0]:
     with student_tabs[1]:
 
         st.subheader("📝 Questions")
-        
         try:
-
+            
     df = pd.read_csv("data/QnA.csv")
 
     df.columns = df.columns.str.strip()
@@ -218,6 +217,7 @@ with main_tabs[0]:
 except Exception as e:
 
     st.error(e)
+
         
         # MCQ
         with student_tabs[2]:
