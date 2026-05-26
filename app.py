@@ -58,8 +58,6 @@ with main_tabs[0]:
                 first_row = group.iloc[0]
                 title = first_row["Question_Text"]
 
-import streamlit as st
-
 # टेबल रेंडर करण्यासाठी एक फंक्शन (कोडची पुनरावृत्ती टाळण्यासाठी)
 def render_html_table(data):
     if not data:
