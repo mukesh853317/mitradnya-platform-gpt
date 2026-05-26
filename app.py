@@ -72,7 +72,7 @@ if st.button("Show Solution"):
         try:
 
             model = genai.GenerativeModel(
-                "gemini-1.5-pro-latest"
+                "gemini-3.5-flash"
             )
 
             prompt = f"""
@@ -170,7 +170,8 @@ with main_tabs[1]:
             [
                 "Book Keeping",
                 "OCM",
-                "SP"
+                "SP",
+                "ECO"
             ]
         )
 
