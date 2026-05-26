@@ -67,8 +67,7 @@ with main_tabs[0]:
             st.success("QnA File Loaded")
             
             st.dataframe(df.head())
-
-except Exception as e:
+        except Exception as e:
 
     st.error(e)
 
