@@ -67,82 +67,64 @@ with main_tabs[0]:
     # QUESTIONS
     # ====================================================
 
-    with student_tabs[1]:
+with student_tabs[1]:
 
-        st.subheader("📝 Questions")
+    st.subheader("📝 Questions")
 
-        df = pd.read_csv("data/qna.csv")
+    df = pd.read_csv("data/qna.csv")
 
-df.columns = df.columns.str.strip()
+    df.columns = df.columns.str.strip()
 
-chapter = st.selectbox(
-    "Select Chapter",
-    df["Chapter_Name"].dropna().unique()
-)
+    chapter = st.selectbox(
+        "Select Chapter",
+        df["Chapter_Name"].dropna().unique()
+    )
 
-filtered_df = df[
-    df["Chapter_Name"] == chapter
-]
+    filtered_df = df[
+        df["Chapter_Name"] == chapter
+    ]
 
-question = st.selectbox(
-    "Select Question",
-    filtered_df["Question_Text"].dropna()
-)
+    question = st.selectbox(
+        "Select Question",
+        filtered_df["Question_Text"].dropna()
+    )
 
-st.code(question)
-        if uploaded_questions:
+    st.code(question)
 
-            df = pd.read_csv(uploaded_questions)
+    if st.button("Show AI Solution"):
 
-            df.columns = df.columns.str.strip()
+        with st.spinner("Generating Solution..."):
 
-            st.write(df.columns)
+            try:
 
-            question = st.selectbox(
-                "Select Question",
-                df["Question_Text"].dropna()
-        )
+                model = genai.GenerativeModel(
+                    "gemini-2.0-flash"
+                )
 
-            st.text_area(
-                "Selected Question",
-                question,
-                height=300
-        )
+                prompt = f"""
+                Solve this Maharashtra Board question.
 
-            if st.button("Show AI Solution"):
+                Use:
+                - proper format
+                - step-by-step explanation
+                - easy language
+                - board pattern
 
-                with st.spinner("Generating Solution..."):
+                Question:
+                {question}
+                """
 
-                    try:
+                response = model.generate_content(
+                    prompt
+                )
 
-                        model = genai.GenerativeModel(
-                            "gemini-2.0-flash"
-                        )
+                st.success("Solution Generated")
 
-                        prompt = f"""
-                        Solve this Maharashtra Board question.
+                st.write(response.text)
 
-                        Rules:
-                        - step-by-step
-                        - easy explanation
-                        - proper format
-                        - board style answer
+            except Exception as e:
 
-                        Question:
-                        {question}
-                        """
-
-                        response = model.generate_content(
-                            prompt
-                        )
-
-                        st.success("Solution Generated")
-
-                        st.write(response.text)
-
-                    except Exception as e:
-
-                        st.error(e)
+                st.error(e)
 
     # ====================================================
     # MCQ TEST
