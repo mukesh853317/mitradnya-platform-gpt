@@ -68,12 +68,9 @@ with main_tabs[0]:
             
             st.dataframe(df.head())
         except Exception as e:
-
-    st.error(e)
-
-    # MCQ
-
-    with student_tabs[2]:
+            st.error(e)
+            # MCQ
+        with student_tabs[2]:
 
         st.subheader("🎯 MCQ Test")
 
