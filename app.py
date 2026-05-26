@@ -60,15 +60,11 @@ with main_tabs[0]:
 
         st.subheader("📝 Questions")
         try:
-            
-    df = pd.read_csv("data/QnA.csv")
-
-    df.columns = df.columns.str.strip()
-
-    # Fill missing values
+            df = pd.read_csv("data/QnA.csv")
+            df.columns = df.columns.str.strip()
+            # Fill missing values
     df["Chapter_Name"] = df["Chapter_Name"].ffill()
     df["Category"] = df["Category"].ffill()
-
     # Main Question Detection
     df["is_main"] = (
         df["Question_Text"]
