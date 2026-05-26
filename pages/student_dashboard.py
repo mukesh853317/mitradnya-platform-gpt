@@ -1,20 +1,128 @@
 import streamlit as st
-                        key=f"solution_{q_id}"
-                    ):
+import pandas as pd
 
-                        with st.spinner(
-                            "Generating Solution..."
-                        ):
+from utils.table_renderer import render_html_table
 
-                            answer = generate_solution(
-                                full_question
-                            )
+def show_student_dashboard():
 
-                            st.success(
-                                "Solution Generated"
-                            )
+    st.header("🎓 Student Dashboard")
 
-                            st.write(answer)
+    student_tabs = st.tabs([
+        "📝 Questions",
+        "🎯 MCQ",
+        "🎥 Study Room"
+    ])
+
+    # ====================================================
+    # QUESTIONS
+    # ====================================================
+
+    with student_tabs[0]:
+
+        st.subheader("📝 Questions")
+
+        try:
+
+            df = pd.read_csv("data/QnA.csv")
+
+            df.columns = df.columns.str.strip()
+
+            df["Chapter_Name"] = df["Chapter_Name"].ffill()
+            df["Category"] = df["Category"].ffill()
+
+            # MAIN QUESTION DETECTION
+
+            df["is_main"] = (
+                df["Question_Text"]
+                .astype(str)
+                .str.contains(r"Q\d", regex=True, na=False)
+            )
+
+            # QUESTION GROUPS
+
+            df["Question_ID"] = (
+                df["is_main"]
+                .cumsum()
+            )
+
+            # FILTERS
+
+            chapter = st.selectbox(
+                "Select Chapter",
+                df["Chapter_Name"].dropna().unique()
+            )
+
+            category = st.selectbox(
+                "Select Category",
+                df["Category"].dropna().unique()
+            )
+
+            filtered_df = df[
+                (df["Chapter_Name"] == chapter)
+                &
+                (df["Category"] == category)
+            ]
+
+            grouped = filtered_df.groupby("Question_ID")
+
+            # QUESTIONS
+
+            for q_no, group in grouped:
+
+                first_row = group.iloc[0]
+
+                title = str(
+                    first_row["Question_Text"]
+                )
+
+                short_title = (
+                    title[:80] + "..."
+                    if len(title) > 80
+                    else title
+                )
+
+                with st.expander(f"📘 {short_title}"):
+
+                    table_data = []
+
+                    for _, row in group.iterrows():
+
+                        line = str(
+                            row["Question_Text"]
+                        ).strip()
+
+                        # TABLE LINE
+
+                        if "|" in line:
+
+                            row_data = [
+                                col.strip()
+                                for col in line.split("|")
+                            ]
+
+                            table_data.append(row_data)
+
+                        else:
+
+                            if table_data:
+
+                                render_html_table(
+                                    table_data
+                                )
+
+                                table_data = []
+
+                            if line:
+
+                                st.markdown(line)
+
+                    # LAST TABLE
+
+                    if table_data:
+
+                        render_html_table(
+                            table_data
+                        )
 
         except Exception as e:
 
@@ -24,41 +132,18 @@ import streamlit as st
     # MCQ
     # ====================================================
 
-    with tabs[2]:
+    with student_tabs[1]:
 
         st.subheader("🎯 MCQ Test")
 
-        st.info("MCQ Module Ready")
+        st.info("MCQ Section Working")
 
     # ====================================================
     # STUDY ROOM
     # ====================================================
 
-    with tabs[3]:
+    with student_tabs[2]:
 
         st.subheader("🎥 Study Room")
 
-        subject = st.selectbox(
-            "Select Subject",
-            [
-                "Book Keeping",
-                "OCM",
-                "SP",
-                "Economics"
-            ]
-        )
-
-        st.write(f"Selected Subject: {subject}")
-
-        timer = st.slider(
-            "Study Time",
-            15,
-            180,
-            45
-        )
-
-        st.progress(0)
-
-        st.info(
-            f"Focus Session: {timer} Minutes"
-        )
+        st.info("Study Room Working")
