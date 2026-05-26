@@ -250,6 +250,40 @@ with main_tabs[1]:
                 st.error(e)
 
     # ====================================================
+# CREATE QUESTION GROUPS
+# ====================================================
+
+df["Question_Text"] = (
+    df["Question_Text"]
+    .astype(str)
+)
+
+# MAIN QUESTION DETECTION
+df["is_main"] = df[
+    "Question_Text"
+].str.contains(
+    r"Q\d",
+    regex=True,
+    na=False
+)
+
+# QUESTION ID
+df["Question_ID"] = (
+    df["is_main"]
+    .cumsum()
+)
+
+# FILL VALUES
+df["Chapter_Name"] = (
+    df["Chapter_Name"]
+    .ffill()
+)
+
+df["Category"] = (
+    df["Category"]
+    .ffill()
+)
+    # ====================================================
     # STATISTICS
     # ====================================================
 
