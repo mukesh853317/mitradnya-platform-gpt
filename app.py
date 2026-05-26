@@ -10,13 +10,13 @@ st.set_page_config(
 
 st.title("📚 Mitradnya Learning Platform")
 
-tabs = st.tabs([
+main_tabs = st.tabs([
     "🎓 Student Dashboard",
     "👨‍🏫 Admin Dashboard"
 ])
 
-with tabs[0]:
+with main_tabs[0]:
     show_student_dashboard()
 
-with tabs[1]:
+with main_tabs[1]:
     show_admin_dashboard()
