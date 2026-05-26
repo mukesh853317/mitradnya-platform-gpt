@@ -1,5 +1,9 @@
 import streamlit as st
 import pandas as pd
+import google.generativeai as genai
+API_KEY = "AIzaSyAN8CnJurB961hY-S9PWbyfuNBI0uVlrGI"
+
+genai.configure(api_key=API_KEY)
 
 st.set_page_config(
     page_title="Mitradnya Learning Platform",
@@ -53,8 +57,8 @@ with main_tabs[0]:
         question = st.selectbox(
             "Select Question",
             [
-                "Single Entry System",
-                "Rectification of Errors",
+                "Partnership Final Account",
+                "NPO",
                 "Bills of Exchange"
             ]
         )
@@ -63,7 +67,35 @@ with main_tabs[0]:
 
         if st.button("Show Solution"):
 
-            st.success("Solution Will Be Added Here")
+            with st.spinner("Generating Solution..."):
+
+    try:
+
+        model = genai.GenerativeModel(
+            "gemini-1.5-flash"
+        )
+
+        prompt = f"""
+        Solve this Maharashtra Board question step-by-step.
+
+        Use:
+        - proper format
+        - easy explanation
+        - board pattern
+
+        Question:
+        {question}
+        """
+
+        response = model.generate_content(
+            prompt
+        )
+
+        st.write(response.text)
+
+    except Exception as e:
+
+        st.error(e)
 
     # MCQ
 
