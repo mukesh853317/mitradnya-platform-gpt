@@ -252,20 +252,10 @@ with main_tabs[1]:
     # ====================================================
     # CREATE QUESTION GROUPS
     # ====================================================
+    df["Question_Text"] = (df["Question_Text.astype(str))
 
-df["Question_Text"] = (
-    df["Question_Text
-    .astype(str)
-)
-
-# MAIN QUESTION DETECTION
-df["is_main"] = df[
-    "Question_Text"
-].str.contains(
-    r"Q\d",
-    regex=True,
-    na=False
-)
+    # MAIN QUESTION DETECTION
+                           df["is_main"] = df["Question_Text"].str.contains(r"Q\d",regex=True,na=False)
 
 # QUESTION ID
 df["Question_ID"] = (
