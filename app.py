@@ -80,10 +80,14 @@ with main_tabs[0]:
 
             df = pd.read_csv(uploaded_questions)
 
+            df.columns = df.columns.str.strip()
+
+            st.write(df.columns)
+
             question = st.selectbox(
                 "Select Question",
                 df["Question_Text"].dropna()
-            )
+        )
 
             st.info(question)
 
@@ -139,7 +143,7 @@ with main_tabs[0]:
 
             mcq_df = pd.read_csv(
                 uploaded_mcq,
-                encoding="latin1"
+                encoding="utf-8"
             )
 
             random_question = mcq_df.sample(1).iloc[0]
