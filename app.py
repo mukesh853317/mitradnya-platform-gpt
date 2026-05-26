@@ -61,165 +61,163 @@ with main_tabs[0]:
         st.subheader("📝 Questions")
         
         try:
-        
-            df = pd.read_csv("data/QnA.csv")
-            
-            st.success("QnA File Loaded")
-            
-            df = pd.read_csv("data/QnA.csv")
 
-df.columns = df.columns.str.strip()
+    df = pd.read_csv("data/QnA.csv")
 
-# Fill missing values
-df["Chapter_Name"] = df["Chapter_Name"].ffill()
-df["Category"] = df["Category"].ffill()
+    df.columns = df.columns.str.strip()
 
-# Main Question Detection
-df["is_main"] = (
-    df["Question_Text"]
-    .astype(str)
-    .str.contains("Q1|Q2|Q3|Q4|Q5", na=False)
-)
+    # Fill missing values
+    df["Chapter_Name"] = df["Chapter_Name"].ffill()
+    df["Category"] = df["Category"].ffill()
 
-df["Question_ID"] = df["is_main"].cumsum()
+    # Main Question Detection
+    df["is_main"] = (
+        df["Question_Text"]
+        .astype(str)
+        .str.contains("Q1|Q2|Q3|Q4|Q5", na=False)
+    )
 
-# Chapter Select
-chapter = st.selectbox(
-    "Select Chapter",
-    df["Chapter_Name"].unique()
-)
+    df["Question_ID"] = df["is_main"].cumsum()
 
-# Category Select
-category = st.selectbox(
-    "Select Category",
-    df["Category"].unique()
-)
+    # Chapter Select
+    chapter = st.selectbox(
+        "Select Chapter",
+        df["Chapter_Name"].unique()
+    )
 
-filtered_df = df[
-    (df["Chapter_Name"] == chapter)
-    &
-    (df["Category"] == category)
-]
+    # Category Select
+    category = st.selectbox(
+        "Select Category",
+        df["Category"].unique()
+    )
 
-grouped = filtered_df.groupby("Question_ID")
+    filtered_df = df[
+        (df["Chapter_Name"] == chapter)
+        &
+        (df["Category"] == category)
+    ]
 
-for q_id, group in grouped:
+    grouped = filtered_df.groupby("Question_ID")
 
-    first_row = group.iloc[0]
+    for q_id, group in grouped:
 
-    title = first_row["Question_Text"]
+        first_row = group.iloc[0]
 
-    with st.expander(title):
+        title = first_row["Question_Text"]
 
-        table_data = []
+        with st.expander(title):
 
-        for _, row in group.iterrows():
+            table_data = []
 
-            line = str(row["Question_Text"])
+            for _, row in group.iterrows():
 
-            if "|" in line:
+                line = str(row["Question_Text"])
 
-                cols = [
-                    c.strip()
-                    for c in line.split("|")
-                ]
+                if "|" in line:
 
-                table_data.append(cols)
+                    cols = [
+                        c.strip()
+                        for c in line.split("|")
+                    ]
 
-            else:
+                    table_data.append(cols)
 
-                if table_data:
+                else:
 
-                    table_html = """
-                    <table style='width:100%;
-                    border-collapse:collapse;
-                    margin-bottom:15px;'>
-                    """
+                    if table_data:
 
-                    for r_idx, t_row in enumerate(table_data):
-
-                        table_html += "<tr>"
-
-                        for col in t_row:
-
-                            if r_idx == 0:
-
-                                table_html += f"""
-                                <th style='border:1px solid #ddd;
-                                padding:8px;
-                                background:#262730;
-                                color:white;'>
-                                {col}
-                                </th>
-                                """
-
-                            else:
-
-                                table_html += f"""
-                                <td style='border:1px solid #ddd;
-                                padding:8px;'>
-                                {col}
-                                </td>
-                                """
-
-                        table_html += "</tr>"
-
-                    table_html += "</table>"
-
-                    st.markdown(
-                        table_html,
-                        unsafe_allow_html=True
-                    )
-
-                    table_data = []
-
-                st.markdown(line)
-
-        # Last Table
-        if table_data:
-
-            table_html = """
-            <table style='width:100%;
-            border-collapse:collapse;
-            margin-bottom:15px;'>
-            """
-
-            for r_idx, t_row in enumerate(table_data):
-
-                table_html += "<tr>"
-
-                for col in t_row:
-
-                    if r_idx == 0:
-
-                        table_html += f"""
-                        <th style='border:1px solid #ddd;
-                        padding:8px;
-                        background:#262730;
-                        color:white;'>
-                        {col}
-                        </th>
+                        table_html = """
+                        <table style='width:100%;
+                        border-collapse:collapse;
+                        margin-bottom:15px;'>
                         """
 
-                    else:
+                        for r_idx, t_row in enumerate(table_data):
 
-                        table_html += f"""
-                        <td style='border:1px solid #ddd;
-                        padding:8px;'>
-                        {col}
-                        </td>
-                        """
+                            table_html += "<tr>"
 
-                table_html += "</tr>"
+                            for col in t_row:
 
-            table_html += "</table>"
+                                if r_idx == 0:
 
-            st.markdown(
-                table_html,
-                unsafe_allow_html=True
-            )
-        except Exception as e:
-            st.error(e)
+                                    table_html += f"""
+                                    <th style='border:1px solid #ddd;
+                                    padding:8px;
+                                    background:#262730;
+                                    color:white;'>
+                                    {col}
+                                    </th>
+                                    """
+
+                                else:
+
+                                    table_html += f"""
+                                    <td style='border:1px solid #ddd;
+                                    padding:8px;'>
+                                    {col}
+                                    </td>
+                                    """
+
+                            table_html += "</tr>"
+
+                        table_html += "</table>"
+
+                        st.markdown(
+                            table_html,
+                            unsafe_allow_html=True
+                        )
+
+                        table_data = []
+
+                    st.markdown(line)
+
+            # Last Table
+            if table_data:
+
+                table_html = """
+                <table style='width:100%;
+                border-collapse:collapse;
+                margin-bottom:15px;'>
+                """
+
+                for r_idx, t_row in enumerate(table_data):
+
+                    table_html += "<tr>"
+
+                    for col in t_row:
+
+                        if r_idx == 0:
+
+                            table_html += f"""
+                            <th style='border:1px solid #ddd;
+                            padding:8px;
+                            background:#262730;
+                            color:white;'>
+                            {col}
+                            </th>
+                            """
+
+                        else:
+
+                            table_html += f"""
+                            <td style='border:1px solid #ddd;
+                            padding:8px;'>
+                            {col}
+                            </td>
+                            """
+
+                    table_html += "</tr>"
+
+                table_html += "</table>"
+
+                st.markdown(
+                    table_html,
+                    unsafe_allow_html=True
+                )
+
+except Exception as e:
+
+    st.error(e)
         
         # MCQ
         with student_tabs[2]:
