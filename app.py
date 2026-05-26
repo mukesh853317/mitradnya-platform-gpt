@@ -227,7 +227,7 @@ if table_data:
         unsafe_allow_html=True
     )
 
-        if st.button("Show Solution"):
+            if st.button("Show Solution"):
 
             with st.spinner("Generating Solution..."):
 
