@@ -6,7 +6,7 @@ import google.generativeai as genai
 # GEMINI API
 # ====================================================
 
-API_KEY = " "
+API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 genai.configure(api_key=API_KEY)
 
@@ -67,64 +67,64 @@ with main_tabs[0]:
     # QUESTIONS
     # ====================================================
 
-with student_tabs[1]:
+    with student_tabs[1]:
 
-    st.subheader("📝 Questions")
+        st.subheader("📝 Questions")
 
-    df = pd.read_csv("data/QnA.csv")
+        df = pd.read_csv("data/QnA.csv")
 
-    df.columns = df.columns.str.strip()
+        df.columns = df.columns.str.strip()
 
-    chapter = st.selectbox(
-        "Select Chapter",
-        df["Chapter_Name"].dropna().unique()
-    )
+        chapter = st.selectbox(
+            "Select Chapter",
+            df["Chapter_Name"].dropna().unique()
+        )
 
-    filtered_df = df[
-        df["Chapter_Name"] == chapter
-    ]
+        filtered_df = df[
+            df["Chapter_Name"] == chapter
+        ]
 
-    question = st.selectbox(
-        "Select Question",
-        filtered_df["Question_Text"].dropna()
-    )
+        question = st.selectbox(
+            "Select Question",
+            filtered_df["Question_Text"].dropna()
+        )
 
-    st.code(question)
+        st.code(question)
 
-    if st.button("Show Solution"):
+        if st.button("Show Solution"):
 
-        with st.spinner("Generating Solution..."):
+            with st.spinner("Generating Solution..."):
 
-            try:
+                try:
 
-                model = genai.GenerativeModel(
-                    "gemini-2.0-flash"
-                )
+                    model = genai.GenerativeModel(
+                        "gemini-2.0-flash"
+                    )
 
-                prompt = f"""
-                Solve this Maharashtra Board question.
+                    prompt = f"""
+                    Solve this Maharashtra Board question.
 
-                Use:
-                - proper format
-                - step-by-step explanation
-                - easy language
-                - board pattern
+                    Use:
+                    - proper format
+                    - step-by-step explanation
+                    - easy language
+                    - board pattern
 
-                Question:
-                {question}
-                """
+                    Question:
+                    {question}
+                    """
 
-                response = model.generate_content(
-                    prompt
-                )
+                    response = model.generate_content(
+                        prompt
+                    )
 
-                st.success("Solution Generated")
+                    st.success("Solution Generated")
 
-                st.write(response.text)
+                    st.write(response.text)
 
-            except Exception as e:
+                except Exception as e:
 
-                st.error(e)
+                    st.error(e)
 
     # ====================================================
     # MCQ TEST
@@ -135,74 +135,41 @@ with student_tabs[1]:
         st.subheader("🎯 MCQ Test")
 
         mcq_df = pd.read_csv(
-    "data/mcq.csv",
-    encoding="ignore"
-)
+            "data/mcq.csv",
+            encoding="latin1"
+        )
 
-random_question = mcq_df.sample(1).iloc[0]
+        mcq_df.columns = mcq_df.columns.str.strip()
 
-st.write(random_question["Question"])
+        random_question = mcq_df.sample(1).iloc[0]
 
-answer = st.radio(
-    "Choose Answer",
-    [
-        random_question["Option A"],
-        random_question["Option B"],
-        random_question["Option C"],
-        random_question["Option D"]
-    ]
-)
+        st.write(random_question["Question"])
 
-if st.button("Submit MCQ"):
+        answer = st.radio(
+            "Choose Answer",
+            [
+                random_question["Option A"],
+                random_question["Option B"],
+                random_question["Option C"],
+                random_question["Option D"]
+            ]
+        )
 
-    correct = random_question[
-        "Correct Answer (Full Text)"
-    ]
+        if st.button("Submit MCQ"):
 
-    if answer == correct:
+            correct = random_question[
+                "Correct Answer (Full Text)"
+            ]
 
-        st.success("Correct Answer")
+            if answer == correct:
 
-    else:
+                st.success("Correct Answer")
 
-        st.error(f"Correct Answer: {correct}")
-        
-        if uploaded_mcq:
+            else:
 
-            mcq_df = pd.read_csv(
-                uploaded_mcq,
-                encoding="utf-8"
-            )
-
-            random_question = mcq_df.sample(1).iloc[0]
-
-            st.write(random_question["Question"])
-
-            answer = st.radio(
-                "Choose Answer",
-                [
-                    random_question["Option A"],
-                    random_question["Option B"],
-                    random_question["Option C"],
-                    random_question["Option D"]
-                ]
-            )
-
-            if st.button("Submit MCQ"):
-
-                correct = random_question[
-                    "Correct Answer (Full Text)"
-                ]
-
-                if answer == correct:
-
-                    st.success("Correct Answer")
-
-                else:
-
-                    st.error(
-                        f"Correct Answer: {correct}"
-                    )
+                st.error(
+                    f"Correct Answer: {correct}"
+                )
 
     # ====================================================
     # BOARD PAPERS
