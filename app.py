@@ -35,9 +35,7 @@ main_tabs = st.tabs([
 # ====================================================
 
 with main_tabs[0]:
-
     st.header("🎓 Student Dashboard")
-
     student_tabs = st.tabs([
         "📖 Notes",
         "📝 Questions",
@@ -49,136 +47,97 @@ with main_tabs[0]:
     # ====================================================
     # NOTES
     # ====================================================
-
     with student_tabs[0]:
-
         st.subheader("📖 Notes")
-
         uploaded_notes = st.file_uploader(
             "Upload Notes",
             type=["pdf"]
         )
-
         if uploaded_notes:
-
             st.success("Notes Uploaded Successfully")
-
     # ====================================================
     # QUESTIONS
     # ====================================================
-
-    with student_tabs[1]:
-
-        st.subheader("📝 Questions")
-
-        df = pd.read_csv("data/QnA.csv")
-
-        df.columns = df.columns.str.strip()
-
-        chapter = st.selectbox(
-            "Select Chapter",
-            df["Chapter_Name"].dropna().unique()
+with student_tabs[1]:
+    st.subheader("📝 Questions")
+    df = pd.read_csv("data/QnA.csv")
+    df.columns = df.columns.str.strip()
+    chapter = st.selectbox(
+        "Select Chapter",
+        df["Chapter_Name"].dropna().unique()
+    )
+    question_type = st.selectbox(
+        "Select Question Type",
+        df["Category"].dropna().unique()
+    )
+    filtered_df = df[
+    (df["Chapter_Name"] == chapter)
+    &
+    (df["Category"] == question_type)
+    ]
+    filtered_df = filtered_df.reset_index(drop=True)
+    question_options = [
+        f"Q{idx+1} - {q[:60]}..."
+        for idx, q in enumerate(
+            filtered_df["Question_Text"]
         )
-
-        question_type = st.selectbox(
-            "Select Question Type",
-            df["Category"].dropna().unique()
-        )
-
-        filtered_df = df[
-            (df["Chapter_Name"] == chapter)
-            &
-            (df["Category"] == question_type)
-        ]
-        filtered_df = filtered_df.reset_index(drop=True)
-
-        question_options = [
-            f"Q{idx+1} - {q[:60]}..."
-            for idx, q in enumerate(
-                filtered_df["Question_Text"]
-            )
-        ]
-
-        selected_option = st.selectbox(
-            "Select Question",
-            question_options
-        )
-
-        selected_index = question_options.index(
-            selected_option
-        )
-
-        question = filtered_df.iloc[
-            selected_index
-        ]["Question_Text"]
-
-        lines = question.split("\n")
-
-table_data = []
-
-for line in lines:
-
-    if "|" in line:
-
-        row = [
-            col.strip()
-            for col in line.split("|")
-        ]
-
-        if any(row):
-
-            table_data.append(row)
-
-    else:
-
-        if table_data:
-
-            html_table = """
-            <table style='width:100%;
-            border-collapse: collapse;
-            margin-bottom:20px;'>
-            """
-
-            for r_idx, t_row in enumerate(table_data):
-
-                html_table += "<tr>"
-
-                for col in t_row:
-
-                    if r_idx == 0:
-
-                        html_table += f"""
-                        <th style='border:1px solid #ddd;
-                        padding:8px;
-                        background-color:#262730;
-                        color:white;
-                        text-align:center;'>
-                        {col}
-                        </th>
-                        """
-
-                    else:
-
-                        html_table += f"""
-                        <td style='border:1px solid #ddd;
-                        padding:8px;
-                        text-align:left;'>
-                        {col}
-                        </td>
-                        """
-
-                html_table += "</tr>"
-
-            html_table += "</table>"
-
-            st.markdown(
-                html_table,
-                unsafe_allow_html=True
-            )
-
-            table_data = []
-
-        st.write(line)
+    ]
+    selected_option = st.selectbox(
+        "Select Question",
+        question_options
+    )
+    selected_index = question_options.index(
+        selected_option
+    )
+    question = filtered_df.iloc[
+    selected_index
+    ]["Question_Text"]
+    lines = question.split("\n")
+    table_data = []
+    for line in lines:
+        if "|" in line:
+            row = [
+                col.strip()
+                for col in line.split("|")
+            ]
+            if any(row):
+                table_data.append(row)
+            else:
+                if table_data:
+                    html_table = """
+                    <table style='width:100%;
+                    border-collapse: collapse;
+                    margin-bottom:20px;'>
+                    """
+                    for r_idx, t_row in enumerate(table_data):
+                        html_table += "<tr>"
+                        for col in t_row:
+                            if r_idx == 0:
+                                html_table += f"""
+                                <th style='border:1px solid #ddd;
+                                padding:8px;
+                                background-color:#262730;
+                                color:white;
+                                text-align:center;'>
+                                {col}
+                                </th>
+                                """
+                            else:
+                                html_table += f"""
+                                <td style='border:1px solid #ddd;
+                                padding:8px;
+                                text-align:left;'>
+                                {col}
+                                </td>
+                                """
+                                html_table += "</tr>"
+                                html_table += "</table>"
+                                st.markdown(
+                                    html_table,
+                                    unsafe_allow_html=True
+                                )
+                                table_data = []
+                                st.write(line)
 
 # LAST TABLE HANDLE
 
