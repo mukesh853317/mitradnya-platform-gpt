@@ -110,6 +110,192 @@ with main_tabs[0]:
 # ====================================================
 # ADMIN DASHBOARD
 # ====================================================
+
 with main_tabs[1]:
+
     st.header("👨‍🏫 Admin Dashboard")
-    st.info("Admin Dashboard Working")
+
+    admin_tabs = st.tabs([
+        "📤 Upload Questions",
+        "📊 View Database",
+        "📝 Add Question",
+        "📈 Statistics"
+    ])
+
+    # ====================================================
+    # UPLOAD CSV
+    # ====================================================
+
+    with admin_tabs[0]:
+
+        st.subheader("📤 Upload CSV File")
+
+        uploaded_file = st.file_uploader(
+            "Upload QnA CSV",
+            type=["csv"]
+        )
+
+        if uploaded_file:
+
+            try:
+
+                df_upload = pd.read_csv(uploaded_file)
+
+                st.success("CSV Uploaded Successfully")
+
+                st.dataframe(df_upload.head())
+
+            except Exception as e:
+
+                st.error(e)
+
+    # ====================================================
+    # VIEW DATABASE
+    # ====================================================
+
+    with admin_tabs[1]:
+
+        st.subheader("📊 Question Database")
+
+        try:
+
+            df_db = pd.read_csv("data/QnA.csv")
+
+            df_db.columns = df_db.columns.str.strip()
+
+            st.write("Total Questions:", len(df_db))
+
+            st.dataframe(
+                df_db,
+                use_container_width=True
+            )
+
+        except Exception as e:
+
+            st.error(e)
+
+    # ====================================================
+    # ADD QUESTION
+    # ====================================================
+
+    with admin_tabs[2]:
+
+        st.subheader("📝 Add New Question")
+
+        chapter = st.text_input(
+            "Chapter Name"
+        )
+
+        category = st.selectbox(
+            "Category",
+            [
+                "IMP_Proforma",
+                "Short_Notes",
+                "One_Sentence",
+                "Exercise_Problems",
+                "Extra_Practical"
+            ]
+        )
+
+        question = st.text_area(
+            "Question"
+        )
+
+        answer = st.text_area(
+            "Answer / Hint"
+        )
+
+        if st.button("➕ Save Question"):
+
+            try:
+
+                new_data = pd.DataFrame({
+
+                    "Chapter_Name": [chapter],
+
+                    "Category": [category],
+
+                    "Question_Text": [question],
+
+                    "Answer_or_Hint": [answer]
+
+                })
+
+                try:
+
+                    old_df = pd.read_csv(
+                        "data/QnA.csv"
+                    )
+
+                    updated_df = pd.concat(
+                        [old_df, new_data],
+                        ignore_index=True
+                    )
+
+                except:
+
+                    updated_df = new_data
+
+                updated_df.to_csv(
+                    "data/QnA.csv",
+                    index=False
+                )
+
+                st.success(
+                    "Question Saved Successfully"
+                )
+
+            except Exception as e:
+
+                st.error(e)
+
+    # ====================================================
+    # STATISTICS
+    # ====================================================
+
+    with admin_tabs[3]:
+
+        st.subheader("📈 Statistics")
+
+        try:
+
+            stats_df = pd.read_csv(
+                "data/QnA.csv"
+            )
+
+            total_questions = len(stats_df)
+
+            total_chapters = stats_df[
+                "Chapter_Name"
+            ].nunique()
+
+            total_categories = stats_df[
+                "Category"
+            ].nunique()
+
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+
+                st.metric(
+                    "Questions",
+                    total_questions
+                )
+
+            with col2:
+
+                st.metric(
+                    "Chapters",
+                    total_chapters
+                )
+
+            with col3:
+
+                st.metric(
+                    "Categories",
+                    total_categories
+                )
+
+        except Exception as e:
+
+            st.error(e)
