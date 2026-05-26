@@ -112,7 +112,120 @@ with main_tabs[0]:
             selected_index
         ]["Question_Text"]
 
-        st.markdown(question)
+        lines = question.split("\n")
+
+table_data = []
+
+for line in lines:
+
+    if "|" in line:
+
+        row = [
+            col.strip()
+            for col in line.split("|")
+        ]
+
+        if any(row):
+
+            table_data.append(row)
+
+    else:
+
+        if table_data:
+
+            html_table = """
+            <table style='width:100%;
+            border-collapse: collapse;
+            margin-bottom:20px;'>
+            """
+
+            for r_idx, t_row in enumerate(table_data):
+
+                html_table += "<tr>"
+
+                for col in t_row:
+
+                    if r_idx == 0:
+
+                        html_table += f"""
+                        <th style='border:1px solid #ddd;
+                        padding:8px;
+                        background-color:#262730;
+                        color:white;
+                        text-align:center;'>
+                        {col}
+                        </th>
+                        """
+
+                    else:
+
+                        html_table += f"""
+                        <td style='border:1px solid #ddd;
+                        padding:8px;
+                        text-align:left;'>
+                        {col}
+                        </td>
+                        """
+
+                html_table += "</tr>"
+
+            html_table += "</table>"
+
+            st.markdown(
+                html_table,
+                unsafe_allow_html=True
+            )
+
+            table_data = []
+
+        st.write(line)
+
+# LAST TABLE HANDLE
+
+if table_data:
+
+    html_table = """
+    <table style='width:100%;
+    border-collapse: collapse;
+    margin-bottom:20px;'>
+    """
+
+    for r_idx, t_row in enumerate(table_data):
+
+        html_table += "<tr>"
+
+        for col in t_row:
+
+            if r_idx == 0:
+
+                html_table += f"""
+                <th style='border:1px solid #ddd;
+                padding:8px;
+                background-color:#262730;
+                color:white;
+                text-align:center;'>
+                {col}
+                </th>
+                """
+
+            else:
+
+                html_table += f"""
+                <td style='border:1px solid #ddd;
+                padding:8px;
+                text-align:left;'>
+                {col}
+                </td>
+                """
+
+        html_table += "</tr>"
+
+    html_table += "</table>"
+
+    st.markdown(
+        html_table,
+        unsafe_allow_html=True
+    )
 
         if st.button("Show Solution"):
 
