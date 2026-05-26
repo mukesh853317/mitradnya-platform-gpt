@@ -6,7 +6,7 @@ def show_admin_dashboard():
 
     st.header("👨‍🏫 Admin Dashboard")
 
-    tabs = st.tabs([
+    admin_tabs = st.tabs([
         "📊 Database",
         "➕ Add Question"
     ])
@@ -15,7 +15,7 @@ def show_admin_dashboard():
     # DATABASE
     # ============================================
 
-    with tabs[0]:
+    with admin_tabs[0]:
 
         st.subheader("📊 Question Database")
 
@@ -36,12 +36,12 @@ def show_admin_dashboard():
     # ADD QUESTION
     # ============================================
 
-    with tabs[1]:
+    with admin_tabs[1]:
 
         st.subheader("➕ Add Question")
 
         chapter = st.text_input(
-            "Chapter"
+            "Chapter Name"
         )
 
         category = st.selectbox(
@@ -60,16 +60,19 @@ def show_admin_dashboard():
         )
 
         answer = st.text_area(
-            "Answer"
+            "Answer / Hint"
         )
 
-        if st.button("Save"):
+        if st.button("Save Question"):
 
             new_row = pd.DataFrame({
 
                 "Chapter_Name": [chapter],
+
                 "Category": [category],
+
                 "Question_Text": [question],
+
                 "Answer_or_Hint": [answer]
 
             })
