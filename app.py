@@ -233,9 +233,7 @@ if table_data:
 
                 try:
 
-                    model = genai.GenerativeModel(
-                        "gemini-3.1-flash"
-                    )
+                    model = genai.GenerativeModel("gemini-3.1-flash")
 
                     prompt = f"""
                     Solve this Maharashtra Board question.
