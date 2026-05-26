@@ -67,35 +67,35 @@ with main_tabs[0]:
 
         if st.button("Show Solution"):
 
-            with st.spinner("Generating Solution..."):
+    with st.spinner("Generating Solution..."):
 
-    try:
+        try:
 
-        model = genai.GenerativeModel(
-            "gemini-1.5-flash"
-        )
+            model = genai.GenerativeModel(
+                "gemini-1.5-flash"
+            )
 
-        prompt = f"""
-        Solve this Maharashtra Board question step-by-step.
+            prompt = f"""
+            Solve this Maharashtra Board question step-by-step.
 
-        Use:
-        - proper format
-        - easy explanation
-        - board pattern
+            Use:
+            - proper format
+            - easy explanation
+            - board pattern
 
-        Question:
-        {question}
-        """
+            Question:
+            {question}
+            """
 
-        response = model.generate_content(
-            prompt
-        )
+            response = model.generate_content(
+                prompt
+            )
 
-        st.write(response.text)
+            st.write(response.text)
 
-    except Exception as e:
+        except Exception as e:
 
-        st.error(e)
+            st.error(e)
 
     # MCQ
 
