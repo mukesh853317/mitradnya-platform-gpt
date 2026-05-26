@@ -268,15 +268,121 @@ if table_data:
 
     with student_tabs[4]:
 
-        st.subheader("🎥 Study Room")
+    st.subheader("🎥 Study Room")
 
-        video_link = st.text_input(
-            "Enter YouTube Video Link"
-        )
+    st.markdown("""
+    Welcome to the Smart Study Room 📚  
+    Watch lectures, revise concepts, and focus on learning.
+    """)
 
-        if video_link:
+    # ====================================================
+    # SUBJECT SELECTION
+    # ====================================================
 
-            st.video(video_link)
+    study_subject = st.selectbox(
+        "📘 Select Subject",
+        [
+            "Book Keeping",
+            "OCM",
+            "SP",
+            "Economics"
+        ]
+    )
+
+    # ====================================================
+    # CHAPTER INPUT
+    # ====================================================
+
+    study_chapter = st.text_input(
+        "📖 Enter Chapter Name"
+    )
+
+    # ====================================================
+    # TIMER
+    # ====================================================
+
+    st.markdown("### ⏳ Study Focus Timer")
+
+    study_time = st.slider(
+        "Select Study Time (Minutes)",
+        15,
+        180,
+        45
+    )
+
+    st.info(
+        f"🎯 Focus Session: {study_time} Minutes"
+    )
+
+    # ====================================================
+    # NOTES SECTION
+    # ====================================================
+
+    st.markdown("### 📝 Quick Notes")
+
+    quick_notes = st.text_area(
+        "Write your important points here..."
+    )
+
+    if st.button("💾 Save Notes"):
+
+        st.success("Notes Saved Successfully")
+
+    # ====================================================
+    # YOUTUBE LECTURE
+    # ====================================================
+
+    st.markdown("### 🎥 Lecture Video")
+
+    video_link = st.text_input(
+        "Paste YouTube Video Link"
+    )
+
+    if video_link:
+
+        st.video(video_link)
+
+    # ====================================================
+    # STUDY TIPS
+    # ====================================================
+
+    st.markdown("### 📌 Study Tips")
+
+    st.markdown("""
+    - Revise practical problems daily  
+    - Practice journal entries regularly  
+    - Focus more on formats and adjustments  
+    - Solve at least 1 full paper weekly  
+    - Write answers in proper board format  
+    """)
+
+    # ====================================================
+    # DAILY TARGET
+    # ====================================================
+
+    st.markdown("### 🎯 Daily Study Target")
+
+    target = st.number_input(
+        "Questions To Solve Today",
+        min_value=1,
+        max_value=100,
+        value=10
+    )
+
+    completed = st.slider(
+        "Completed Questions",
+        0,
+        target,
+        0
+    )
+
+    progress = completed / target
+
+    st.progress(progress)
+
+    st.write(
+        f"✅ Completed: {completed}/{target}"
+    )
 
 # ====================================================
 # ADMIN DASHBOARD
