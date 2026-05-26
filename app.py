@@ -89,7 +89,11 @@ with main_tabs[0]:
                 df["Question_Text"].dropna()
         )
 
-            st.info(question)
+            st.text_area(
+                "Selected Question",
+                question,
+                height=300
+        )
 
             if st.button("Show AI Solution"):
 
