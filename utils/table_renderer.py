@@ -9,7 +9,9 @@ def render_html_table(table_data):
     <table style="
         width:100%;
         border-collapse:collapse;
+        margin-top:10px;
         margin-bottom:20px;
+        font-size:15px;
     ">
     """
 
@@ -23,13 +25,14 @@ def render_html_table(table_data):
 
                 html += f"""
                 <th style="
-                    border:1px solid #ddd;
+                    border:1px solid #d1d5db;
                     padding:10px;
-                    background:#374151;
+                    background-color:#374151;
                     color:white;
                     text-align:center;
+                    font-weight:bold;
                 ">
-                {col}
+                    {col}
                 </th>
                 """
 
@@ -37,10 +40,12 @@ def render_html_table(table_data):
 
                 html += f"""
                 <td style="
-                    border:1px solid #ddd;
+                    border:1px solid #d1d5db;
                     padding:10px;
+                    background:white;
+                    color:black;
                 ">
-                {col}
+                    {col}
                 </td>
                 """
 
@@ -48,4 +53,7 @@ def render_html_table(table_data):
 
     html += "</table>"
 
-    st.markdown(html, unsafe_allow_html=True)
+    st.markdown(
+        html,
+        unsafe_allow_html=True
+    )
