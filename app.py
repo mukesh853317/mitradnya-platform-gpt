@@ -227,30 +227,26 @@ if table_data:
         unsafe_allow_html=True
     )
     if st.button("Show Solution"):
-
         with st.spinner("Generating Solution..."):
-
-             try:
-
-                 model = genai.GenerativeModel("gemini-3.1-flash")
-                 prompt = f"""
-                 Solve this Maharashtra Board question.
-                 Use:
-                   - proper format
-                   - step-by-step explanation
-                   - easy language
-                   - board pattern
-
-                 Question:
-                 {question}
-                    """
-                 response = model.generate_content(
-                     prompt
-                 )
-                 st.success("Solution Generated")
-                 st.write(response.text)
-             except Exception as e:
-                 st.error(e)
+            try:
+                model = genai.GenerativeModel("gemini-3.1-flash")
+                prompt = f"""
+                Solve this Maharashtra Board question.
+                Use:
+                - proper format
+                - step-by-step explanation
+                - easy language
+                - board pattern
+                Question:
+                {question}
+                """
+                response = model.generate_content(
+                    prompt
+                )
+                st.success("Solution Generated")
+                st.write(response.text)
+            except Exception as e:
+                st.error(e)
 
     # ====================================================
     # MCQ TEST
