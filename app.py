@@ -250,11 +250,11 @@ with main_tabs[1]:
                 st.error(e)
 
     # ====================================================
-# CREATE QUESTION GROUPS
-# ====================================================
+    # CREATE QUESTION GROUPS
+    # ====================================================
 
 df["Question_Text"] = (
-    df["Question_Text"]
+    df["Question_Text
     .astype(str)
 )
 
