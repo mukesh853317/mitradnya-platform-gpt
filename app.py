@@ -80,10 +80,16 @@ with main_tabs[0]:
             df["Chapter_Name"].dropna().unique()
         )
 
-        filtered_df = df[
-            df["Chapter_Name"] == chapter
-        ]
+        question_type = st.selectbox(
+            "Select Question Type",
+            df["Question_Type"].dropna().unique()
+        )
 
+        filtered_df = df[
+            (df["Chapter_Name"] == chapter)
+            &
+            (df["Question_Type"] == question_type)
+        ]
         filtered_df = filtered_df.reset_index(drop=True)
 
         question_options = [
@@ -106,7 +112,7 @@ with main_tabs[0]:
             selected_index
         ]["Question_Text"]
 
-        st.code(question)
+        st.markdown(question)
 
         if st.button("Show Solution"):
 
