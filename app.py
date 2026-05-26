@@ -71,7 +71,7 @@ with student_tabs[1]:
 
     st.subheader("📝 Questions")
 
-    df = pd.read_csv("data/qna.csv")
+    df = pd.read_csv("data/QnA.csv")
 
     df.columns = df.columns.str.strip()
 
@@ -91,7 +91,7 @@ with student_tabs[1]:
 
     st.code(question)
 
-    if st.button("Show AI Solution"):
+    if st.button("Show Solution"):
 
         with st.spinner("Generating Solution..."):
 
@@ -135,7 +135,7 @@ with student_tabs[1]:
         st.subheader("🎯 MCQ Test")
 
         mcq_df = pd.read_csv(
-    "data/mcq.csv",
+    "data/All in one.csv",
     encoding="utf-8"
 )
 
