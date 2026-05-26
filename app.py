@@ -135,8 +135,8 @@ with student_tabs[1]:
         st.subheader("🎯 MCQ Test")
 
         mcq_df = pd.read_csv(
-    "data/All in one.csv",
-    encoding="utf-8"
+    "data/mcq.csv",
+    encoding="ignore"
 )
 
 random_question = mcq_df.sample(1).iloc[0]
