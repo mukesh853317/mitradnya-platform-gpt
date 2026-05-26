@@ -3,21 +3,22 @@ import pandas as pd
 
 from utils.table_renderer import render_html_table
 
+
 def show_student_dashboard():
 
     st.header("🎓 Student Dashboard")
 
-    student_tabs = st.tabs([
+    tabs = st.tabs([
         "📝 Questions",
         "🎯 MCQ",
         "🎥 Study Room"
     ])
 
-    # ====================================================
+    # =================================================
     # QUESTIONS
-    # ====================================================
+    # =================================================
 
-    with student_tabs[0]:
+    with tabs[0]:
 
         st.subheader("📝 Questions")
 
@@ -35,26 +36,19 @@ def show_student_dashboard():
             df["is_main"] = (
                 df["Question_Text"]
                 .astype(str)
-                .str.contains(r"Q\d", regex=True, na=False)
+                .str.contains(r"Q\d|From the following", regex=True, na=False)
             )
 
-            # QUESTION GROUPS
-
-            df["Question_ID"] = (
-                df["is_main"]
-                .cumsum()
-            )
-
-            # FILTERS
+            df["Question_ID"] = df["is_main"].cumsum()
 
             chapter = st.selectbox(
                 "Select Chapter",
-                df["Chapter_Name"].dropna().unique()
+                df["Chapter_Name"].unique()
             )
 
             category = st.selectbox(
                 "Select Category",
-                df["Category"].dropna().unique()
+                df["Category"].unique()
             )
 
             filtered_df = df[
@@ -65,23 +59,19 @@ def show_student_dashboard():
 
             grouped = filtered_df.groupby("Question_ID")
 
-            # QUESTIONS
-
             for q_no, group in grouped:
 
-                first_row = group.iloc[0]
-
-                title = str(
-                    first_row["Question_Text"]
+                first_question = str(
+                    group.iloc[0]["Question_Text"]
                 )
 
                 short_title = (
-                    title[:80] + "..."
-                    if len(title) > 80
-                    else title
+                    first_question[:80] + "..."
+                    if len(first_question) > 80
+                    else first_question
                 )
 
-                with st.expander(f"📘 {short_title}"):
+                with st.expander(f"📘 Question {q_no}: {short_title}"):
 
                     table_data = []
 
@@ -91,18 +81,20 @@ def show_student_dashboard():
                             row["Question_Text"]
                         ).strip()
 
-                        # TABLE LINE
+                        # TABLE ROW
 
                         if "|" in line:
 
-                            row_data = [
-                                col.strip()
-                                for col in line.split("|")
+                            cols = [
+                                c.strip()
+                                for c in line.split("|")
                             ]
 
-                            table_data.append(row_data)
+                            table_data.append(cols)
 
                         else:
+
+                            # TABLE COMPLETE
 
                             if table_data:
 
@@ -111,6 +103,8 @@ def show_student_dashboard():
                                 )
 
                                 table_data = []
+
+                            # NORMAL TEXT
 
                             if line:
 
@@ -128,22 +122,22 @@ def show_student_dashboard():
 
             st.error(e)
 
-    # ====================================================
+    # =================================================
     # MCQ
-    # ====================================================
+    # =================================================
 
-    with student_tabs[1]:
+    with tabs[1]:
 
         st.subheader("🎯 MCQ Test")
 
-        st.info("MCQ Section Working")
+        st.info("MCQ Section")
 
-    # ====================================================
+    # =================================================
     # STUDY ROOM
-    # ====================================================
+    # =================================================
 
-    with student_tabs[2]:
+    with tabs[2]:
 
         st.subheader("🎥 Study Room")
 
-        st.info("Study Room Working")
+        st.info("Study Room")
