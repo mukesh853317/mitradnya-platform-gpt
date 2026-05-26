@@ -59,8 +59,18 @@ with main_tabs[0]:
     with student_tabs[1]:
 
         st.subheader("📝 Questions")
+        
+        try:
+        
+            df = pd.read_csv("data/QnA.csv")
+            
+            st.success("QnA File Loaded")
+            
+            st.dataframe(df.head())
 
-        st.info("Questions Section Working")
+except Exception as e:
+
+    st.error(e)
 
     # MCQ
 
