@@ -6,7 +6,7 @@ import google.generativeai as genai
 # GEMINI API
 # ====================================================
 
-API_KEY = st.secrets["GOOGLE_API_KEY"]
+API_KEY = " "
 
 genai.configure(api_key=API_KEY)
 
@@ -35,7 +35,9 @@ main_tabs = st.tabs([
 # ====================================================
 
 with main_tabs[0]:
+
     st.header("🎓 Student Dashboard")
+
     student_tabs = st.tabs([
         "📖 Notes",
         "📝 Questions",
@@ -47,165 +49,78 @@ with main_tabs[0]:
     # ====================================================
     # NOTES
     # ====================================================
+
     with student_tabs[0]:
+
         st.subheader("📖 Notes")
+
         uploaded_notes = st.file_uploader(
             "Upload Notes",
             type=["pdf"]
         )
+
         if uploaded_notes:
+
             st.success("Notes Uploaded Successfully")
+
     # ====================================================
     # QUESTIONS
     # ====================================================
-with student_tabs[1]:
-    st.subheader("📝 Questions")
-    df = pd.read_csv("data/QnA.csv")
-    df.columns = df.columns.str.strip()
-    chapter = st.selectbox(
-        "Select Chapter",
-        df["Chapter_Name"].dropna().unique()
-    )
-    question_type = st.selectbox(
-        "Select Question Type",
-        df["Category"].dropna().unique()
-    )
-    filtered_df = df[
-    (df["Chapter_Name"] == chapter)
-    &
-    (df["Category"] == question_type)
-    ]
-    filtered_df = filtered_df.reset_index(drop=True)
-    question_options = [
-        f"Q{idx+1} - {q[:60]}..."
-        for idx, q in enumerate(
-            filtered_df["Question_Text"]
+
+    with student_tabs[1]:
+
+        st.subheader("📝 Questions")
+
+        uploaded_questions = st.file_uploader(
+            "Upload QnA CSV",
+            type=["csv"]
         )
-    ]
-    selected_option = st.selectbox(
-        "Select Question",
-        question_options
-    )
-    selected_index = question_options.index(
-        selected_option
-    )
-    question = filtered_df.iloc[
-    selected_index
-    ]["Question_Text"]
-    lines = question.split("\n")
-    table_data = []
-    for line in lines:
-        if "|" in line:
-            row = [
-                col.strip()
-                for col in line.split("|")
-            ]
-            if any(row):
-                table_data.append(row)
-            else:
-                if table_data:
-                    html_table = """
-                    <table style='width:100%;
-                    border-collapse: collapse;
-                    margin-bottom:20px;'>
-                    """
-                    for r_idx, t_row in enumerate(table_data):
-                        html_table += "<tr>"
-                        for col in t_row:
-                            if r_idx == 0:
-                                html_table += f"""
-                                <th style='border:1px solid #ddd;
-                                padding:8px;
-                                background-color:#262730;
-                                color:white;
-                                text-align:center;'>
-                                {col}
-                                </th>
-                                """
-                            else:
-                                html_table += f"""
-                                <td style='border:1px solid #ddd;
-                                padding:8px;
-                                text-align:left;'>
-                                {col}
-                                </td>
-                                """
-                                html_table += "</tr>"
-                                html_table += "</table>"
-                                st.markdown(
-                                    html_table,
-                                    unsafe_allow_html=True
-                                )
-                                table_data = []
-                                st.write(line)
 
-# LAST TABLE HANDLE
+        if uploaded_questions:
 
-if table_data:
+            df = pd.read_csv(uploaded_questions)
 
-    html_table = """
-    <table style='width:100%;
-    border-collapse: collapse;
-    margin-bottom:20px;'>
-    """
+            question = st.selectbox(
+                "Select Question",
+                df["Question_Text"].dropna()
+            )
 
-    for r_idx, t_row in enumerate(table_data):
+            st.info(question)
 
-        html_table += "<tr>"
+            if st.button("Show AI Solution"):
 
-        for col in t_row:
+                with st.spinner("Generating Solution..."):
 
-            if r_idx == 0:
+                    try:
 
-                html_table += f"""
-                <th style='border:1px solid #ddd;
-                padding:8px;
-                background-color:#262730;
-                color:white;
-                text-align:center;'>
-                {col}
-                </th>
-                """
+                        model = genai.GenerativeModel(
+                            "gemini-2.0-flash"
+                        )
 
-            else:
+                        prompt = f"""
+                        Solve this Maharashtra Board question.
 
-                html_table += f"""
-                <td style='border:1px solid #ddd;
-                padding:8px;
-                text-align:left;'>
-                {col}
-                </td>
-                """
+                        Rules:
+                        - step-by-step
+                        - easy explanation
+                        - proper format
+                        - board style answer
 
-        html_table += "</tr>"
+                        Question:
+                        {question}
+                        """
 
-    html_table += "</table>"
+                        response = model.generate_content(
+                            prompt
+                        )
 
-    st.markdown(
-        html_table,
-        unsafe_allow_html=True
-    )
-    if st.button("Show Solution"):
-        with st.spinner("Generating Solution..."):
-            try:
-                model = genai.GenerativeModel("gemini-3.1-flash")
-                prompt = f"""
-                Solve this Maharashtra Board question.
-                Use:
-                - proper format
-                - step-by-step explanation
-                - easy language
-                - board pattern
-                Question:
-                {question}
-                """
-                response = model.generate_content(
-                    prompt
-                )
-                st.success("Solution Generated")
-                st.write(response.text)
-            except Exception as e:
-                st.error(e)
+                        st.success("Solution Generated")
+
+                        st.write(response.text)
+
+                    except Exception as e:
+
+                        st.error(e)
 
     # ====================================================
     # MCQ TEST
@@ -215,42 +130,47 @@ if table_data:
 
         st.subheader("🎯 MCQ Test")
 
-        mcq_df = pd.read_csv(
-            "data/mcq.csv",
-            encoding="latin1"
+        uploaded_mcq = st.file_uploader(
+            "Upload MCQ CSV",
+            type=["csv"]
         )
 
-        mcq_df.columns = mcq_df.columns.str.strip()
+        if uploaded_mcq:
 
-        random_question = mcq_df.sample(1).iloc[0]
+            mcq_df = pd.read_csv(
+                uploaded_mcq,
+                encoding="latin1"
+            )
 
-        st.write(random_question["Question"])
+            random_question = mcq_df.sample(1).iloc[0]
 
-        answer = st.radio(
-            "Choose Answer",
-            [
-                random_question["Option A"],
-                random_question["Option B"],
-                random_question["Option C"],
-                random_question["Option D"]
-            ]
-        )
+            st.write(random_question["Question"])
 
-        if st.button("Submit MCQ"):
+            answer = st.radio(
+                "Choose Answer",
+                [
+                    random_question["Option A"],
+                    random_question["Option B"],
+                    random_question["Option C"],
+                    random_question["Option D"]
+                ]
+            )
 
-            correct = random_question[
-                "Correct Answer (Full Text)"
-            ]
+            if st.button("Submit MCQ"):
 
-            if answer == correct:
+                correct = random_question[
+                    "Correct Answer (Full Text)"
+                ]
 
-                st.success("Correct Answer")
+                if answer == correct:
 
-            else:
+                    st.success("Correct Answer")
 
-                st.error(
-                    f"Correct Answer: {correct}"
-                )
+                else:
+
+                    st.error(
+                        f"Correct Answer: {correct}"
+                    )
 
     # ====================================================
     # BOARD PAPERS
@@ -268,121 +188,15 @@ if table_data:
 
     with student_tabs[4]:
 
-    st.subheader("🎥 Study Room")
+        st.subheader("🎥 Study Room")
 
-    st.markdown("""
-    Welcome to the Smart Study Room 📚  
-    Watch lectures, revise concepts, and focus on learning.
-    """)
+        video_link = st.text_input(
+            "Enter YouTube Video Link"
+        )
 
-    # ====================================================
-    # SUBJECT SELECTION
-    # ====================================================
+        if video_link:
 
-    study_subject = st.selectbox(
-        "📘 Select Subject",
-        [
-            "Book Keeping",
-            "OCM",
-            "SP",
-            "Economics"
-        ]
-    )
-
-    # ====================================================
-    # CHAPTER INPUT
-    # ====================================================
-
-    study_chapter = st.text_input(
-        "📖 Enter Chapter Name"
-    )
-
-    # ====================================================
-    # TIMER
-    # ====================================================
-
-    st.markdown("### ⏳ Study Focus Timer")
-
-    study_time = st.slider(
-        "Select Study Time (Minutes)",
-        15,
-        180,
-        45
-    )
-
-    st.info(
-        f"🎯 Focus Session: {study_time} Minutes"
-    )
-
-    # ====================================================
-    # NOTES SECTION
-    # ====================================================
-
-    st.markdown("### 📝 Quick Notes")
-
-    quick_notes = st.text_area(
-        "Write your important points here..."
-    )
-
-    if st.button("💾 Save Notes"):
-
-        st.success("Notes Saved Successfully")
-
-    # ====================================================
-    # YOUTUBE LECTURE
-    # ====================================================
-
-    st.markdown("### 🎥 Lecture Video")
-
-    video_link = st.text_input(
-        "Paste YouTube Video Link"
-    )
-
-    if video_link:
-
-        st.video(video_link)
-
-    # ====================================================
-    # STUDY TIPS
-    # ====================================================
-
-    st.markdown("### 📌 Study Tips")
-
-    st.markdown("""
-    - Revise practical problems daily  
-    - Practice journal entries regularly  
-    - Focus more on formats and adjustments  
-    - Solve at least 1 full paper weekly  
-    - Write answers in proper board format  
-    """)
-
-    # ====================================================
-    # DAILY TARGET
-    # ====================================================
-
-    st.markdown("### 🎯 Daily Study Target")
-
-    target = st.number_input(
-        "Questions To Solve Today",
-        min_value=1,
-        max_value=100,
-        value=10
-    )
-
-    completed = st.slider(
-        "Completed Questions",
-        0,
-        target,
-        0
-    )
-
-    progress = completed / target
-
-    st.progress(progress)
-
-    st.write(
-        f"✅ Completed: {completed}/{target}"
-    )
+            st.video(video_link)
 
 # ====================================================
 # ADMIN DASHBOARD
