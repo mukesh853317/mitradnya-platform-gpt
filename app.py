@@ -244,18 +244,13 @@ if table_data:
                  Question:
                  {question}
                     """
-
-                    response = model.generate_content(
-                        prompt
-                    )
-
-                    st.success("Solution Generated")
-
-                    st.write(response.text)
-
-                except Exception as e:
-
-                    st.error(e)
+                 response = model.generate_content(
+                     prompt
+                 )
+                 st.success("Solution Generated")
+                 st.write(response.text)
+             except Exception as e:
+                 st.error(e)
 
     # ====================================================
     # MCQ TEST
