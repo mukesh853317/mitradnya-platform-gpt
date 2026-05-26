@@ -1,66 +1,46 @@
 import streamlit as st
 
-                            html_table += f"""
-                            <td style='border:1px solid #ddd;
-                            padding:8px;'>
-                            {col}
-                            </td>
-                            """
 
-                    html_table += "</tr>"
+def render_html_table(data):
 
-                html_table += "</table>"
+    if not data:
+        return
 
-                st.markdown(
-                    html_table,
-                    unsafe_allow_html=True
-                )
+    html = """
+    <table style='width:100%;
+    border-collapse:collapse;
+    margin-bottom:20px;'>
+    """
 
-                table_data = []
+    for r_idx, row in enumerate(data):
 
-            if line:
-                st.markdown(line)
+        html += "<tr>"
 
-    if table_data:
+        for col in row:
 
-        html_table = """
-        <table style='width:100%;
-        border-collapse: collapse;
-        margin-bottom:20px;'>
-        """
+            if r_idx == 0:
 
-        for r_idx, t_row in enumerate(table_data):
+                html += f"""
+                <th style='border:1px solid #ddd;
+                padding:10px;
+                background:#374151;
+                color:white;
+                text-align:center;'>
+                {col}
+                </th>
+                """
 
-            html_table += "<tr>"
+            else:
 
-            for col in t_row:
+                html += f"""
+                <td style='border:1px solid #ddd;
+                padding:10px;'>
+                {col}
+                </td>
+                """
 
-                if r_idx == 0:
+        html += "</tr>"
 
-                    html_table += f"""
-                    <th style='border:1px solid #ddd;
-                    padding:8px;
-                    background-color:#262730;
-                    color:white;
-                    text-align:center;'>
-                    {col}
-                    </th>
-                    """
+    html += "</table>"
 
-                else:
-
-                    html_table += f"""
-                    <td style='border:1px solid #ddd;
-                    padding:8px;'>
-                    {col}
-                    </td>
-                    """
-
-            html_table += "</tr>"
-
-        html_table += "</table>"
-
-        st.markdown(
-            html_table,
-            unsafe_allow_html=True
-        )
+    st.markdown(html, unsafe_allow_html=True)
