@@ -84,10 +84,27 @@ with main_tabs[0]:
             df["Chapter_Name"] == chapter
         ]
 
-        question = st.selectbox(
+        filtered_df = filtered_df.reset_index(drop=True)
+
+        question_options = [
+            f"Q{idx+1} - {q[:60]}..."
+            for idx, q in enumerate(
+                filtered_df["Question_Text"]
+            )
+        ]
+
+        selected_option = st.selectbox(
             "Select Question",
-            filtered_df["Question_Text"].dropna()
+            question_options
         )
+
+        selected_index = question_options.index(
+            selected_option
+        )
+
+        question = filtered_df.iloc[
+            selected_index
+        ]["Question_Text"]
 
         st.code(question)
 
