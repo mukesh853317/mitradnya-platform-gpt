@@ -8,17 +8,17 @@ def show_student_dashboard():
 
     st.header("🎓 Student Dashboard")
 
-    tabs = st.tabs([
+    student_tabs = st.tabs([
         "📝 Questions",
         "🎯 MCQ",
         "🎥 Study Room"
     ])
 
-    # =================================================
+    # ==================================================
     # QUESTIONS
-    # =================================================
+    # ==================================================
 
-    with tabs[0]:
+    with student_tabs[0]:
 
         st.subheader("📝 Questions")
 
@@ -31,24 +31,30 @@ def show_student_dashboard():
             df["Chapter_Name"] = df["Chapter_Name"].ffill()
             df["Category"] = df["Category"].ffill()
 
-            # MAIN QUESTION DETECTION
-
+            # Main Question Detection
             df["is_main"] = (
                 df["Question_Text"]
                 .astype(str)
-                .str.contains(r"Q\d|From the following", regex=True, na=False)
+                .str.contains(
+                    r"From the following|Q1|Q2|Q3|Q4",
+                    regex=True,
+                    na=False
+                )
             )
 
-            df["Question_ID"] = df["is_main"].cumsum()
+            df["Question_ID"] = (
+                df["is_main"]
+                .cumsum()
+            )
 
             chapter = st.selectbox(
                 "Select Chapter",
-                df["Chapter_Name"].unique()
+                df["Chapter_Name"].dropna().unique()
             )
 
             category = st.selectbox(
                 "Select Category",
-                df["Category"].unique()
+                df["Category"].dropna().unique()
             )
 
             filtered_df = df[
@@ -59,28 +65,29 @@ def show_student_dashboard():
 
             grouped = filtered_df.groupby("Question_ID")
 
-            for q_no, group in grouped:
+            for q_no, (qid, group) in enumerate(grouped, start=1):
 
                 first_question = str(
                     group.iloc[0]["Question_Text"]
                 )
 
-                short_title = (
+                title = (
                     first_question[:80] + "..."
                     if len(first_question) > 80
                     else first_question
                 )
 
-                with st.expander(f"📘 Question {q_no}: {short_title}"):
+                with st.expander(f"📘 Question {q_no}: {title}"):
 
                     table_data = []
 
                     for _, row in group.iterrows():
 
-                        line = str(row["Question_Text"]).strip()
+                        line = str(
+                            row["Question_Text"]
+                        ).strip()
 
-                        # TABLE ROW
-
+                        # TABLE LINE
                         if "|" in line:
 
                             cols = [
@@ -92,8 +99,7 @@ def show_student_dashboard():
 
                         else:
 
-                            # TABLE COMPLETE
-
+                            # Render Previous Table
                             if table_data:
 
                                 render_html_table(
@@ -102,14 +108,11 @@ def show_student_dashboard():
 
                                 table_data = []
 
-                            # NORMAL TEXT
-
                             if line:
 
-                                st.markdown(f"### {line})
+                                st.markdown(line)
 
-                    # LAST TABLE
-
+                    # Final Table Render
                     if table_data:
 
                         render_html_table(
@@ -118,24 +121,64 @@ def show_student_dashboard():
 
         except Exception as e:
 
-            st.error(e)
+            st.error(f"Error: {e}")
 
-    # =================================================
+    # ==================================================
     # MCQ
-    # =================================================
+    # ==================================================
 
-    with tabs[1]:
+    with student_tabs[1]:
 
         st.subheader("🎯 MCQ Test")
 
-        st.info("MCQ Section")
+        st.info("MCQ Section Ready")
 
-    # =================================================
+    # ==================================================
     # STUDY ROOM
-    # =================================================
+    # ==================================================
 
-    with tabs[2]:
+    with student_tabs[2]:
 
         st.subheader("🎥 Study Room")
 
-        st.info("Study Room")
+        st.markdown("""
+        ### 📚 Smart Study Room
+
+        - Watch Lectures
+        - Revise Daily
+        - Track Progress
+        - Focus Mode
+        """)
+
+        subject = st.selectbox(
+            "Select Subject",
+            [
+                "Book Keeping",
+                "OCM",
+                "SP",
+                "Economics"
+            ]
+        )
+
+        chapter_name = st.text_input(
+            "Enter Chapter Name"
+        )
+
+        study_time = st.slider(
+            "Study Time (Minutes)",
+            15,
+            180,
+            45
+        )
+
+        st.info(
+            f"🎯 Today's Focus Session: {study_time} Minutes"
+        )
+
+        notes = st.text_area(
+            "Quick Notes"
+        )
+
+        if st.button("💾 Save Notes"):
+
+            st.success("Notes Saved")
